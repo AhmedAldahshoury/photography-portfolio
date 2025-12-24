@@ -1,0 +1,14 @@
+{
+  "name": "t7tfos-photography-portfolio",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "astro": "^4.16.2",
+    "@astrojs/cloudflare": "^10.3.0"
+  }
+}

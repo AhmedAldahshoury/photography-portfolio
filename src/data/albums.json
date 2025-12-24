@@ -1,0 +1,44 @@
+[
+  {
+    "slug": "noir-nights",
+    "title": "Noir Nights",
+    "location": "Berlin, Germany",
+    "year": "2023",
+    "description": "A cinematic walk through rain-soaked streets and neon reflections after midnight.",
+    "coverImage": "/albums/noir-nights/images/01-noir.svg",
+    "images": [
+      "/albums/noir-nights/images/01-noir.svg",
+      "/albums/noir-nights/images/02-noir.svg",
+      "/albums/noir-nights/images/03-noir.svg",
+      "/albums/noir-nights/images/04-noir.svg"
+    ]
+  },
+  {
+    "slug": "coastal-light",
+    "title": "Coastal Light",
+    "location": "Reykjavík, Iceland",
+    "year": "2022",
+    "description": "Soft horizons, volcanic sands, and the quiet rhythm of northern tides.",
+    "coverImage": "/albums/coastal-light/images/01-coast.svg",
+    "images": [
+      "/albums/coastal-light/images/01-coast.svg",
+      "/albums/coastal-light/images/02-coast.svg",
+      "/albums/coastal-light/images/03-coast.svg",
+      "/albums/coastal-light/images/04-coast.svg"
+    ]
+  },
+  {
+    "slug": "desert-mirage",
+    "title": "Desert Mirage",
+    "location": "Marrakesh, Morocco",
+    "year": "2021",
+    "description": "Wind-carved dunes and the glow of late-afternoon desert light.",
+    "coverImage": "/albums/desert-mirage/images/01-desert.svg",
+    "images": [
+      "/albums/desert-mirage/images/01-desert.svg",
+      "/albums/desert-mirage/images/02-desert.svg",
+      "/albums/desert-mirage/images/03-desert.svg",
+      "/albums/desert-mirage/images/04-desert.svg"
+    ]
+  }
+]
