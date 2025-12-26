@@ -1,9 +1,18 @@
 ---
+import { buildImageUrl } from '../utils/imageUrl';
+
 const { album } = Astro.props;
 ---
 
 <a class="card" href={`/albums/${album.slug}`}>
-  <img src={album.coverImage} alt={`${album.title} cover`} loading="lazy" decoding="async" />
+  <img
+    src={buildImageUrl(album.coverImage, { width: 700, quality: 75 })}
+    alt={`${album.title} cover`}
+    loading="lazy"
+    decoding="async"
+    width="700"
+    height="467"
+  />
   <div class="card-body">
     <div class="badge">{album.year}</div>
     <h3 style="margin-top: 0.75rem;">{album.title}</h3>

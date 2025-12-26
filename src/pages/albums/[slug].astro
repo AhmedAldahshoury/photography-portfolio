@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import albums from '../../data/albums.json';
+import { buildImageUrl } from '../../utils/imageUrl';
 
 export function getStaticPaths() {
   return albums.map((album) => ({
@@ -27,7 +28,15 @@ const { album } = Astro.props;
             {album.year}
           </p>
         </div>
-        <img src={album.coverImage} alt={`${album.title} cover`} loading="eager" decoding="async" fetchpriority="high" />
+        <img
+          src={buildImageUrl(album.coverImage, { width: 1400, quality: 80 })}
+          alt={`${album.title} cover`}
+          loading="eager"
+          decoding="async"
+          fetchpriority="high"
+          width="1400"
+          height="933"
+        />
       </div>
     </div>
   </section>
@@ -37,12 +46,18 @@ const { album } = Astro.props;
       <!-- Responsive image grid with click-to-open lightbox -->
       <div class="image-grid">
         {album.images.map((image, index) => (
-          <button type="button" data-lightbox-src={image} aria-label={`Open image ${index + 1}`}>
+          <button
+            type="button"
+            data-lightbox-src={buildImageUrl(image, { width: 2000, quality: 82 })}
+            aria-label={`Open image ${index + 1}`}
+          >
             <img
-              src={image}
+              src={buildImageUrl(image, { width: 900, quality: 78 })}
               alt={`${album.title} image ${index + 1}`}
               loading="lazy"
               decoding="async"
+              width="900"
+              height="600"
             />
           </button>
         ))}
@@ -55,7 +70,15 @@ const { album } = Astro.props;
     <div class="lightbox-content">
       <button type="button" id="lightbox-close">Close</button>
       <div class="lightbox-image-frame">
-        <img id="lightbox-image" src="" alt="Expanded view" />
+        <img
+          id="lightbox-image"
+          src=""
+          alt="Expanded view"
+          loading="lazy"
+          decoding="async"
+          width="2000"
+          height="1333"
+        />
       </div>
     </div>
   </div>
