@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800">
+  <defs>
+    <linearGradient id="g" x1="1" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#151315" />
+      <stop offset="100%" stop-color="#2d2426" />
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="800" fill="url(#g)" />
+  <rect x="640" y="160" width="360" height="480" fill="#1f191b" />
+  <text x="80" y="140" fill="#e2d6c9" font-family="'Helvetica Neue', Arial" font-size="56" letter-spacing="6">DESERT MIRAGE 04</text>
+</svg>
