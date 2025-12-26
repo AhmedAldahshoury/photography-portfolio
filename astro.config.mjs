@@ -1,9 +1,7 @@
-import { defineConfig } from 'astro/config';
-import cloudflare from '@astrojs/cloudflare';
+import { defineConfig } from "astro/config";
+import sitemap from "@astrojs/sitemap";
 
 export default defineConfig({
-  site: 'https://t7tfos.com',
-  output: 'static',
-  // Cloudflare Pages adapter for static builds.
-  adapter: cloudflare(),
+  site: "https://t7tfos.com",
+  integrations: [sitemap()],
 });
