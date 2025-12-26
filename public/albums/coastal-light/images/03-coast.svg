@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#111821" />
+      <stop offset="100%" stop-color="#1c2633" />
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="800" fill="url(#g)" />
+  <rect x="180" y="180" width="300" height="440" fill="#1b242f" />
+  <text x="80" y="120" fill="#d1d5db" font-family="'Helvetica Neue', Arial" font-size="56" letter-spacing="6">COASTAL LIGHT 03</text>
+</svg>

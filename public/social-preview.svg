@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0a0c10" />
+      <stop offset="100%" stop-color="#1c232d" />
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#g)" />
+  <rect x="80" y="80" width="1040" height="470" fill="#11151c" stroke="#d8c58a" stroke-width="3" />
+  <text x="140" y="240" fill="#f5f5f5" font-family="'Helvetica Neue', Arial" font-size="72" letter-spacing="6">T7TFOS</text>
+  <text x="140" y="330" fill="#b6bdc6" font-family="'Helvetica Neue', Arial" font-size="36" letter-spacing="2">Photography Portfolio</text>
+  <text x="140" y="420" fill="#d8c58a" font-family="'Helvetica Neue', Arial" font-size="24" letter-spacing="4">t7tfos.com</text>
+</svg>

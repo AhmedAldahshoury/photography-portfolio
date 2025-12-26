@@ -1,0 +1,12 @@
+---
+const { album } = Astro.props;
+---
+
+<a class="card" href={`/albums/${album.slug}`}>
+  <img src={album.coverImage} alt={`${album.title} cover`} loading="lazy" />
+  <div class="card-body">
+    <div class="badge">{album.year}</div>
+    <h3 style="margin-top: 0.75rem;">{album.title}</h3>
+    <p style="color: var(--muted); margin-top: 0.5rem;">{album.location}</p>
+  </div>
+</a>
