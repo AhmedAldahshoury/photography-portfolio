@@ -1,0 +1,84 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import AlbumCard from '../components/AlbumCard.astro';
+import albums from '../data/albums.json';
+
+const featured = albums.slice(0, 2);
+---
+
+<BaseLayout
+  title="T7TFOS Photography — Cinematic Portfolio"
+  description="A premium photography portfolio featuring editorial, travel, and cinematic collections."
+>
+  <section class="hero">
+    <div class="container">
+      <span class="badge">Professional Portfolio</span>
+      <h1 class="hero-title">Cinematic stories in light, shadow, and atmosphere.</h1>
+      <p class="hero-text">
+        T7TFOS is a visual storyteller crafting bold imagery for brands, editors, and private collectors.
+        Explore curated albums built for fast loading and immersive viewing.
+      </p>
+      <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+        <a class="btn" href="/albums">View Albums</a>
+        <a class="btn" href="/contact">Book a Session</a>
+      </div>
+      <div class="hero-grid">
+        <div class="hero-panel">
+          <h3>Editorial</h3>
+          <p style="color: var(--muted); margin-top: 0.5rem;">
+            Fashion-forward editorials with crisp direction and intentional mood.
+          </p>
+        </div>
+        <div class="hero-panel">
+          <h3>Travel</h3>
+          <p style="color: var(--muted); margin-top: 0.5rem;">
+            Destination storytelling built around light, architecture, and culture.
+          </p>
+        </div>
+        <div class="hero-panel">
+          <h3>Commercial</h3>
+          <p style="color: var(--muted); margin-top: 0.5rem;">
+            Campaign-ready imagery for luxury hospitality and lifestyle brands.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <h2 class="section-title">Featured Albums</h2>
+      <p class="section-subtitle">
+        A glimpse into the latest collections. All albums are dynamically generated from a single JSON file.
+      </p>
+      <div class="grid grid-2" style="margin-top: 2.5rem;">
+        {featured.map((album) => (
+          <AlbumCard album={album} />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="grid grid-2" style="align-items: center;">
+        <div>
+          <h2 class="section-title">Dark, premium, fast.</h2>
+          <p class="section-subtitle">
+            Built on Astro for lightning-fast performance, SEO-friendly metadata, and a polished dark interface
+            designed to keep the focus on the work.
+          </p>
+        </div>
+        <div class="card" style="padding: 2rem;">
+          <h3>Services</h3>
+          <ul style="margin-top: 1rem; color: var(--muted); list-style: none; display: grid; gap: 0.6rem;">
+            <li>Luxury brand campaigns</li>
+            <li>Destination editorials</li>
+            <li>Portrait and portraiture direction</li>
+            <li>Creative consulting</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
