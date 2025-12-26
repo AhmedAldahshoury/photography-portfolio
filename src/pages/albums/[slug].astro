@@ -54,7 +54,9 @@ const { album } = Astro.props;
   <div class="lightbox" id="lightbox" aria-hidden="true">
     <div class="lightbox-content">
       <button type="button" id="lightbox-close">Close</button>
-      <img id="lightbox-image" src="" alt="Expanded view" />
+      <div class="lightbox-image-frame">
+        <img id="lightbox-image" src="" alt="Expanded view" />
+      </div>
     </div>
   </div>
 
