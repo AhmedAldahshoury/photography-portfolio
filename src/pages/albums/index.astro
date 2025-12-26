@@ -1,0 +1,25 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import AlbumCard from '../../components/AlbumCard.astro';
+import albums from '../../data/albums.json';
+---
+
+<BaseLayout
+  title="Albums — T7TFOS Photography"
+  description="Browse cinematic photography albums curated by T7TFOS."
+>
+  <section class="section">
+    <div class="container">
+      <h1 class="section-title">Albums</h1>
+      <p class="section-subtitle">
+        Discover collections of editorial, travel, and atmospheric photography. Each album is driven by JSON data
+        for fast static delivery.
+      </p>
+      <div class="grid grid-3" style="margin-top: 2.5rem;">
+        {albums.map((album) => (
+          <AlbumCard album={album} />
+        ))}
+      </div>
+    </div>
+  </section>
+</BaseLayout>
