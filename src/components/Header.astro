@@ -1,0 +1,19 @@
+---
+const links = [
+  { href: '/', label: 'Home' },
+  { href: '/albums', label: 'Albums' },
+  { href: '/about', label: 'About' },
+  { href: '/contact', label: 'Contact' },
+];
+---
+
+<header class="header">
+  <div class="container nav">
+    <a class="logo" href="/">T7TFOS</a>
+    <nav class="nav-links" aria-label="Primary">
+      {links.map((link) => (
+        <a href={link.href}>{link.label}</a>
+      ))}
+    </nav>
+  </div>
+</header>
