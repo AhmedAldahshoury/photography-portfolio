@@ -210,6 +210,10 @@ main {
 }
 
 .album-hero img {
+  width: 100%;
+  max-height: 520px;
+  object-fit: cover;
+  object-position: center;
   border-radius: 24px;
   border: 1px solid var(--border);
   box-shadow: var(--shadow);
@@ -222,6 +226,7 @@ main {
 }
 
 .image-grid button {
+  display: block;
   border: none;
   background: none;
   padding: 0;
@@ -229,6 +234,11 @@ main {
 }
 
 .image-grid img {
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 3 / 2;
+  object-fit: cover;
+  object-position: center;
   border-radius: 18px;
   border: 1px solid var(--border);
   transition: transform 0.3s ease, border 0.3s ease;
@@ -263,8 +273,10 @@ main {
 }
 
 .lightbox img {
-  width: 100%;
+  width: min(90vw, 1200px);
+  max-height: 80vh;
   height: auto;
+  object-fit: contain;
   border-radius: 18px;
   border: 1px solid var(--border);
 }
