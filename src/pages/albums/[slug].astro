@@ -27,7 +27,7 @@ const { album } = Astro.props;
             {album.year}
           </p>
         </div>
-        <img src={album.coverImage} alt={`${album.title} cover`} />
+        <img src={album.coverImage} alt={`${album.title} cover`} loading="eager" decoding="async" fetchpriority="high" />
       </div>
     </div>
   </section>
@@ -38,7 +38,12 @@ const { album } = Astro.props;
       <div class="image-grid">
         {album.images.map((image, index) => (
           <button type="button" data-lightbox-src={image} aria-label={`Open image ${index + 1}`}>
-            <img src={image} alt={`${album.title} image ${index + 1}`} loading="lazy" />
+            <img
+              src={image}
+              alt={`${album.title} image ${index + 1}`}
+              loading="lazy"
+              decoding="async"
+            />
           </button>
         ))}
       </div>

@@ -18,3 +18,9 @@ npm run dev
 ## Deployment
 
 Cloudflare Pages will use the Astro Cloudflare adapter with `output: 'static'`.
+
+## Image performance tips
+
+R2 serves original files by default. To deliver smaller variants, enable Cloudflare Image Resizing or place a
+Worker in front of the R2 bucket to generate resized versions (e.g., width/quality/format). Once enabled,
+you can append transformation query parameters to your R2 URLs for faster loading.
