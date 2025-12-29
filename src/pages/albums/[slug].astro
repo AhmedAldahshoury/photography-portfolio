@@ -15,29 +15,55 @@ const albumDate = album.date ? new Date(album.date) : null;
 const formattedDate = albumDate
   ? albumDate.toLocaleDateString('en-US', { month: 'long', day: '2-digit', year: 'numeric', timeZone: 'UTC' })
   : null;
-const location = album.slug?.split('-').slice(3).join(' ');
+const toTitleCase = (value) =>
+  value
+    ?.split(' ')
+    .filter(Boolean)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ');
+
+const normalizedTitle = album.title?.replace(/^\d{4}[\s_-]?\d{2}[\s_-]?\d{2}\s*/, '').trim();
+const slugLocation = album.slug?.replace(/^\d{4}-\d{2}-\d{2}-/, '').replace(/[-_]/g, ' ');
+const titleLocation = normalizedTitle || slugLocation;
+const location = titleLocation || album.slug?.split('-').slice(3).join(' ');
 const locationLabel = location
-  ? location.replace(/\b\w/g, (char) => char.toUpperCase())
+  ? toTitleCase(location)
   : 'T7TFOS';
+const albumTitle = locationLabel || 'Signature Series';
 const imageCount = album.imageKeys?.length ?? 0;
 const frameLabel = imageCount ? `${imageCount} frame${imageCount === 1 ? '' : 's'}` : 'Gallery';
-const metaDescription = albumDate
-  ? `${album.title} captured on ${formattedDate} in ${locationLabel}, featuring ${frameLabel}.`
-  : `Photography album ${album.title} in ${locationLabel}, featuring ${frameLabel}.`;
+const hashSeed = (input) =>
+  Array.from(input ?? '').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+const seed = hashSeed(album.slug || album.title || album.coverKey || '');
+const toneOptions = ['luminous', 'moody', 'sunlit', 'nocturnal', 'softly lit', 'atmospheric'];
+const focusOptions = ['textures', 'architecture', 'portraits', 'landscapes', 'details', 'ritual'];
+const paletteOptions = ['warm neutrals', 'deep shadows', 'muted blues', 'golden tones', 'silvery highlights', 'earthy hues'];
+const tone = toneOptions[seed % toneOptions.length];
+const focus = focusOptions[(seed + 3) % focusOptions.length];
+const palette = paletteOptions[(seed + 7) % paletteOptions.length];
+const albumDescription =
+  album.description ??
+  `A ${tone} study of ${albumTitle} highlighting ${focus} with ${palette}.`;
+const metaDescription = albumDescription ?? (albumDate
+  ? `${albumTitle} captured on ${formattedDate} in ${locationLabel}, featuring ${frameLabel}.`
+  : `Photography album ${albumTitle} in ${locationLabel}, featuring ${frameLabel}.`);
 ---
 
 <BaseLayout
-  title={`${album.title} — T7TFOS Photography`}
+  title={`${albumTitle} — T7TFOS Photography`}
   description={metaDescription}
 >
   <section class="section">
     <div class="container">
       <div class="album-hero">
         <div>
-          <span class="badge">{formattedDate ?? 'Photography Album'}</span>
-          <h1 class="section-title" style="margin-top: 1rem;">{album.title}</h1>
+          <span class="badge">{formattedDate ?? 'Signature Series'}</span>
+          <h1 class="section-title" style="margin-top: 1rem;">{albumTitle}</h1>
           <p class="section-subtitle" style="margin-top: 1rem;">
             {locationLabel} · {frameLabel}
+          </p>
+          <p style="margin-top: 1.5rem; color: var(--muted); max-width: 40rem;">
+            {albumDescription}
           </p>
           {albumDate && (
             <p style="margin-top: 1.5rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.2em;">
@@ -47,7 +73,7 @@ const metaDescription = albumDate
         </div>
         <img
           src={cfImageUrl(album.coverKey, { width: 1400, quality: 80 })}
-          alt={`${album.title} cover`}
+          alt={`${albumTitle} cover`}
           loading="eager"
           decoding="async"
           fetchpriority="high"
@@ -70,7 +96,7 @@ const metaDescription = albumDate
           >
             <img
               src={cfImageUrl(image, { width: 900, quality: 78 })}
-              alt={`${album.title} image ${index + 1}`}
+              alt={`${albumTitle} image ${index + 1}`}
               loading="lazy"
               decoding="async"
               width="900"
