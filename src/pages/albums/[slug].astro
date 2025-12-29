@@ -30,42 +30,35 @@ const metaDescription = albumDate
   title={`${album.title} — T7TFOS Photography`}
   description={metaDescription}
 >
-  <section class="section">
-    <div class="container">
-      <div class="album-hero">
-        <div>
-          <span class="badge">{formattedDate ?? 'Photography Album'}</span>
-          <h1 class="section-title" style="margin-top: 1rem;">{album.title}</h1>
-          <p class="section-subtitle" style="margin-top: 1rem;">
-            {locationLabel} · {frameLabel}
-          </p>
-          {albumDate && (
-            <p style="margin-top: 1.5rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.2em;">
-              {albumDate.getUTCFullYear()}
-            </p>
-          )}
-        </div>
-        <img
-          src={cfImageUrl(album.coverKey, { width: 1400, quality: 80 })}
-          alt={`${album.title} cover`}
-          loading="eager"
-          decoding="async"
-          fetchpriority="high"
-          width="1400"
-          height="933"
-        />
-      </div>
+  <section class="album-banner">
+    <img
+      src={cfImageUrl(album.coverKey, { width: 1800, quality: 82 })}
+      alt={`${album.title} cover`}
+      loading="eager"
+      decoding="async"
+      fetchpriority="high"
+      width="1800"
+      height="1200"
+    />
+    <div class="album-banner-overlay"></div>
+    <div class="container album-banner-content">
+      <a class="back-link" href="/albums">Back to albums</a>
+      <h1>{album.title}</h1>
+      <p>
+        {formattedDate ?? 'Photography Album'} · {locationLabel} · {frameLabel}
+      </p>
     </div>
   </section>
 
   <section class="section">
     <div class="container">
-      <!-- Responsive image grid with click-to-open lightbox -->
-      <div class="image-grid">
+      <div class="masonry masonry-photos">
         {album.imageKeys.map((image, index) => (
           <button
             type="button"
+            class="photo-tile"
             data-lightbox-src={cfImageUrl(image, { width: 2000, quality: 82 })}
+            data-lightbox-index={index}
             aria-label={`Open image ${index + 1}`}
           >
             <img
@@ -82,58 +75,140 @@ const metaDescription = albumDate
     </div>
   </section>
 
-  <!-- Lightweight lightbox overlay (no external libraries) -->
-  <div class="lightbox" id="lightbox" aria-hidden="true">
-    <div class="lightbox-content">
-      <button type="button" id="lightbox-close">Close</button>
+  <div
+    class="lightbox"
+    id="lightbox"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Image viewer"
+    aria-hidden="true"
+  >
+    <div class="lightbox-content" tabindex="-1">
+      <button type="button" class="lightbox-close" aria-label="Close lightbox">
+        Close
+      </button>
       <div class="lightbox-image-frame">
         <img
           id="lightbox-image"
           src=""
           alt="Expanded view"
-          loading="lazy"
           decoding="async"
           width="2000"
           height="1333"
         />
       </div>
+      <button type="button" class="lightbox-nav lightbox-prev" aria-label="Previous image">
+        Prev
+      </button>
+      <button type="button" class="lightbox-nav lightbox-next" aria-label="Next image">
+        Next
+      </button>
     </div>
   </div>
 
   <script is:inline>
     const lightbox = document.getElementById('lightbox');
+    const lightboxContent = lightbox.querySelector('.lightbox-content');
     const lightboxImage = document.getElementById('lightbox-image');
-    const closeButton = document.getElementById('lightbox-close');
+    const closeButton = lightbox.querySelector('.lightbox-close');
+    const prevButton = lightbox.querySelector('.lightbox-prev');
+    const nextButton = lightbox.querySelector('.lightbox-next');
+    const triggers = Array.from(document.querySelectorAll('[data-lightbox-src]'));
 
-    const openLightbox = (src) => {
-      lightboxImage.src = src;
+    let currentIndex = 0;
+    let lastFocused = null;
+
+    const focusableSelectors =
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+
+    const updateImage = (index) => {
+      const target = triggers[index];
+      if (!target) return;
+      lightboxImage.src = target.dataset.lightboxSrc;
+      currentIndex = index;
+      prevButton.disabled = currentIndex === 0;
+      nextButton.disabled = currentIndex === triggers.length - 1;
+      if (history.replaceState) {
+        history.replaceState(null, '', `#photo=${currentIndex + 1}`);
+      }
+    };
+
+    const openLightbox = (index, trigger) => {
+      lastFocused = trigger;
+      updateImage(index);
       lightbox.classList.add('is-open');
       lightbox.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('lightbox-open');
+      closeButton.focus();
     };
 
     const closeLightbox = () => {
       lightbox.classList.remove('is-open');
       lightbox.setAttribute('aria-hidden', 'true');
       lightboxImage.src = '';
+      document.body.classList.remove('lightbox-open');
+      if (history.replaceState) {
+        history.replaceState(null, '', window.location.pathname);
+      }
+      if (lastFocused) {
+        lastFocused.focus();
+      }
     };
 
-    document.querySelectorAll('[data-lightbox-src]').forEach((button) => {
+    const trapFocus = (event) => {
+      if (event.key !== 'Tab') return;
+      const focusableElements = Array.from(lightbox.querySelectorAll(focusableSelectors));
+      if (!focusableElements.length) return;
+      const first = focusableElements[0];
+      const last = focusableElements[focusableElements.length - 1];
+
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
+    triggers.forEach((button, index) => {
       button.addEventListener('click', () => {
-        openLightbox(button.dataset.lightboxSrc);
+        openLightbox(index, button);
       });
     });
 
     closeButton.addEventListener('click', closeLightbox);
+    prevButton.addEventListener('click', () => updateImage(Math.max(0, currentIndex - 1)));
+    nextButton.addEventListener('click', () => updateImage(Math.min(triggers.length - 1, currentIndex + 1)));
+
     lightbox.addEventListener('click', (event) => {
       if (event.target === lightbox) {
         closeLightbox();
       }
     });
 
+    lightbox.addEventListener('keydown', trapFocus);
+
     document.addEventListener('keydown', (event) => {
+      if (!lightbox.classList.contains('is-open')) return;
+
       if (event.key === 'Escape') {
         closeLightbox();
       }
+      if (event.key === 'ArrowLeft') {
+        updateImage(Math.max(0, currentIndex - 1));
+      }
+      if (event.key === 'ArrowRight') {
+        updateImage(Math.min(triggers.length - 1, currentIndex + 1));
+      }
     });
+
+    const hashMatch = window.location.hash.match(/photo=(\d+)/);
+    if (hashMatch) {
+      const index = Number(hashMatch[1]) - 1;
+      if (index >= 0 && index < triggers.length) {
+        openLightbox(index, triggers[index]);
+      }
+    }
   </script>
 </BaseLayout>

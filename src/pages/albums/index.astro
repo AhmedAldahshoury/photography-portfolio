@@ -1,7 +1,19 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import AlbumCard from '../../components/AlbumCard.astro';
 import albums from '../../data/albums.generated.json';
+import { cfImageUrl } from '../../utils/cfImages';
+
+const featuredAlbum = albums[0];
+const remainingAlbums = albums.slice(1);
+const formattedDate = featuredAlbum?.date
+  ? new Date(featuredAlbum.date).toLocaleDateString('en-US', {
+      month: 'long',
+      day: '2-digit',
+      year: 'numeric',
+      timeZone: 'UTC',
+    })
+  : null;
+const featuredCount = featuredAlbum?.imageKeys?.length ?? 0;
 ---
 
 <BaseLayout
@@ -10,14 +22,67 @@ import albums from '../../data/albums.generated.json';
 >
   <section class="section">
     <div class="container">
-      <h1 class="section-title">Albums</h1>
-      <p class="section-subtitle">
-        Discover collections of editorial, travel, and atmospheric photography. Each album is generated from R2
-        at build time for fast static delivery.
-      </p>
-      <div class="grid grid-3" style="margin-top: 2.5rem;">
-        {albums.map((album) => (
-          <AlbumCard album={album} />
+      <div class="section-header">
+        <h1 class="section-title">Albums</h1>
+        <p class="section-subtitle">
+          Discover collections of editorial, travel, and atmospheric photography. Each album is generated from R2
+          at build time for fast static delivery.
+        </p>
+      </div>
+
+      {featuredAlbum && (
+        <a class="featured-album" href={`/albums/${featuredAlbum.slug}`}>
+          <img
+            src={cfImageUrl(featuredAlbum.coverKey, { width: 1600, quality: 80 })}
+            alt={`${featuredAlbum.title} cover`}
+            loading="eager"
+            decoding="async"
+            fetchpriority="high"
+            width="1600"
+            height="1000"
+          />
+          <div class="featured-album-overlay">
+            <span class="badge">Featured Album</span>
+            <h2>{featuredAlbum.title}</h2>
+            <p>
+              {featuredCount} photo{featuredCount === 1 ? '' : 's'}
+              {formattedDate ? ` · ${formattedDate}` : ''}
+            </p>
+            <span class="featured-album-cta">Explore album</span>
+          </div>
+        </a>
+      )}
+
+      <div class="masonry" style="margin-top: 3rem;">
+        {remainingAlbums.map((album) => (
+          <a class="album-tile" href={`/albums/${album.slug}`}>
+            <div class="album-tile-media">
+              <img
+                src={cfImageUrl(album.coverKey, { width: 900, quality: 76 })}
+                alt={`${album.title} cover`}
+                loading="lazy"
+                decoding="async"
+                width="900"
+                height="600"
+              />
+              <div class="album-tile-peek">
+                {album.imageKeys.slice(0, 3).map((image) => (
+                  <img
+                    src={cfImageUrl(image, { width: 240, quality: 70 })}
+                    alt=""
+                    loading="lazy"
+                    decoding="async"
+                    width="240"
+                    height="160"
+                  />
+                ))}
+              </div>
+            </div>
+            <div class="album-tile-meta">
+              <h3>{album.title}</h3>
+              <p>{album.imageKeys.length} photos</p>
+            </div>
+          </a>
         ))}
       </div>
     </div>

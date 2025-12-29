@@ -3,37 +3,89 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import albums from '../data/albums.generated.json';
 import { cfImageUrl } from '../utils/cfImages';
 
-const heroImages = albums.slice(0, 6);
-const heroLoopImages = [...heroImages, ...heroImages];
+const featuredAlbum = albums[0];
+const editorialAlbums = albums.slice(0, 3);
+const aboutTeaser =
+  'T7TFOS is a cinematic photographer focused on editorial stories, travel narratives, and atmospheric light.';
 ---
 
 <BaseLayout
   title="T7TFOS Photography — Cinematic Portfolio"
   description="A premium photography portfolio featuring editorial, travel, and cinematic collections."
 >
-  <section class="hero">
-    <div class="container">
-      <span class="badge">Professional Portfolio</span>
-      <h1 class="hero-title">Cinematic stories in light, shadow, and atmosphere.</h1>
-      <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+  <section class="hero-premium">
+    <div class="hero-premium-media">
+      <img
+        src={cfImageUrl(featuredAlbum.coverKey, { width: 2000, quality: 82 })}
+        alt={`${featuredAlbum.title} cover`}
+        loading="eager"
+        decoding="async"
+        fetchpriority="high"
+        width="2000"
+        height="1333"
+      />
+      <div class="hero-premium-overlay"></div>
+    </div>
+    <div class="container hero-premium-content">
+      <p class="hero-premium-kicker">T7TFOS · Editorial Photographer</p>
+      <h1 class="hero-premium-title">Cinematic stories crafted with light, shadow, and atmosphere.</h1>
+      <p class="hero-premium-meta">Based in Berlin · Available worldwide</p>
+      <div class="hero-premium-actions">
         <a class="btn" href="/albums">View Albums</a>
-        <a class="btn" href="/contact">Book a Session</a>
+        <a class="btn btn-primary" href="/contact">Contact</a>
       </div>
-      <div class="hero-visuals" style={`--item-count: ${heroImages.length};`}>
-        <div class="hero-visuals-track">
-          {heroLoopImages.map((album) => (
-            <a class="hero-visuals-item" href={`/albums/${album.slug}`}>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Featured work</h2>
+        <p class="section-subtitle">An editorial selection curated from the latest collections.</p>
+      </div>
+      <div class="editorial-grid">
+        {editorialAlbums.map((album, index) => (
+          <a
+            class={`editorial-card ${index === 0 ? 'editorial-card--large' : ''}`}
+            href={`/albums/${album.slug}`}
+          >
+            <div class="editorial-image">
               <img
-                src={cfImageUrl(album.coverKey, { width: 600, quality: 76 })}
+                src={cfImageUrl(album.coverKey, { width: index === 0 ? 1200 : 800, quality: 78 })}
                 alt={`${album.title} cover`}
                 loading="lazy"
                 decoding="async"
-                width="500"
-                height="350"
+                width={index === 0 ? '1200' : '800'}
+                height={index === 0 ? '800' : '533'}
               />
-            </a>
-          ))}
-        </div>
+            </div>
+            <div class="editorial-overlay">
+              <span class="badge">{album.date ? new Date(album.date).getUTCFullYear() : 'Featured'}</span>
+              <h3>{album.title}</h3>
+              {album.date && (
+                <p>
+                  {new Date(album.date).toLocaleDateString('en-US', {
+                    month: 'long',
+                    day: '2-digit',
+                    year: 'numeric',
+                    timeZone: 'UTC',
+                  })}
+                </p>
+              )}
+              <span class="editorial-cta">View album</span>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="about-strip">
+    <div class="container">
+      <p>{aboutTeaser}</p>
+      <div class="about-strip-links">
+        <a href="https://instagram.com/t7tfos" target="_blank" rel="noreferrer">Instagram</a>
+        <a href="mailto:hello@t7tfos.com">Email</a>
       </div>
     </div>
   </section>
