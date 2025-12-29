@@ -4,20 +4,32 @@ import { cfImageUrl } from '../utils/cfImages';
 const { album } = Astro.props;
 const albumDate = album.date ? new Date(album.date) : null;
 const yearLabel = albumDate ? albumDate.getUTCFullYear() : 'Album';
-const titleLocation = album.title?.split('—')[0]?.trim();
+const toTitleCase = (value) =>
+  value
+    ?.split(' ')
+    .filter(Boolean)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ');
+
+const normalizedTitle = album.title?.replace(/^\d{4}[\s_-]?\d{2}[\s_-]?\d{2}\s*/, '').trim();
+const slugLocation = album.slug?.replace(/^\d{4}-\d{2}-\d{2}-/, '').replace(/[-_]/g, ' ');
+const titleLocation = normalizedTitle || slugLocation;
 const location = titleLocation || album.slug?.split('-').slice(3).join(' ');
 const locationLabel = location
-  ? location.replace(/\b\w/g, (char) => char.toUpperCase())
+  ? toTitleCase(location)
   : 'Signature Series';
+const albumTitle = locationLabel || 'Signature Series';
 const imageCount = album.imageKeys?.length ?? 0;
 const frameLabel = imageCount ? `${imageCount} frame${imageCount === 1 ? '' : 's'}` : 'Gallery';
+const descriptionFallback = `A refined visual study of ${albumTitle}, shaped by light, texture, and sense of place.`;
+const albumDescription = album.description ?? descriptionFallback;
 ---
 
 <a class="card" href={`/albums/${album.slug}`}>
   <img
     class="card-image"
     src={cfImageUrl(album.coverKey, { width: 700, quality: 75 })}
-    alt={`${album.title} cover`}
+    alt={`${albumTitle} cover`}
     loading="lazy"
     decoding="async"
     width="700"
@@ -25,8 +37,8 @@ const frameLabel = imageCount ? `${imageCount} frame${imageCount === 1 ? '' : 's
   />
   <div class="card-body">
     <div class="badge">{yearLabel}</div>
-    <h3 style="margin-top: 0.75rem;">{album.title}</h3>
-    <p style="color: var(--muted); margin-top: 0.5rem;">{album.description}</p>
+    <h3 style="margin-top: 0.75rem;">{albumTitle}</h3>
+    <p style="color: var(--muted); margin-top: 0.5rem;">{albumDescription}</p>
     <p style="color: var(--muted); margin-top: 0.75rem; font-size: 0.9rem;">
       {locationLabel} · {frameLabel}
     </p>
