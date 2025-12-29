@@ -1,0 +1,150 @@
+<canvas id="mesh-background" aria-hidden="true"></canvas>
+
+<script>
+  const canvas = document.getElementById('mesh-background');
+  const ctx = canvas?.getContext('2d');
+
+  if (canvas && ctx) {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const palette = [
+      [11, 15, 22],
+      [18, 26, 36],
+      [28, 38, 52],
+      [42, 54, 72],
+      [216, 197, 138],
+    ];
+
+    const settings = {
+      rows: 8,
+      cols: 12,
+      amplitude: 24,
+      speed: 0.0015,
+      lineAlpha: 0.18,
+      fillAlpha: 0.68,
+    };
+
+    let width = 0;
+    let height = 0;
+    let points = [];
+
+    const lerp = (a, b, t) => a + (b - a) * t;
+
+    const mixColor = (c1, c2, t) => [
+      Math.round(lerp(c1[0], c2[0], t)),
+      Math.round(lerp(c1[1], c2[1], t)),
+      Math.round(lerp(c1[2], c2[2], t)),
+    ];
+
+    const colorAt = (nx, ny, time) => {
+      const wave =
+        Math.sin(nx * Math.PI * 2 + time * settings.speed) +
+        Math.cos(ny * Math.PI * 2 - time * settings.speed * 0.7);
+      const value = (wave * 0.5 + 0.5) * (palette.length - 1);
+      const index = Math.floor(value);
+      const t = value - index;
+      const c1 = palette[index];
+      const c2 = palette[Math.min(index + 1, palette.length - 1)];
+      const [r, g, b] = mixColor(c1, c2, t);
+      return `rgb(${r} ${g} ${b})`;
+    };
+
+    const setSize = () => {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      buildPoints();
+    };
+
+    const buildPoints = () => {
+      points = [];
+      for (let row = 0; row <= settings.rows; row += 1) {
+        for (let col = 0; col <= settings.cols; col += 1) {
+          const x = (col / settings.cols) * width;
+          const y = (row / settings.rows) * height;
+          points.push({
+            baseX: x,
+            baseY: y,
+            offsetX: Math.random() * Math.PI * 2,
+            offsetY: Math.random() * Math.PI * 2,
+          });
+        }
+      }
+    };
+
+    const getPoint = (row, col, time) => {
+      const index = row * (settings.cols + 1) + col;
+      const point = points[index];
+      const offsetX = Math.sin(point.offsetX + time * settings.speed * 2) * settings.amplitude;
+      const offsetY = Math.cos(point.offsetY + time * settings.speed * 2) * settings.amplitude;
+      return {
+        x: point.baseX + offsetX,
+        y: point.baseY + offsetY,
+      };
+    };
+
+    const drawTriangle = (p1, p2, p3, time) => {
+      const centerX = (p1.x + p2.x + p3.x) / 3;
+      const centerY = (p1.y + p2.y + p3.y) / 3;
+      const nx = centerX / width;
+      const ny = centerY / height;
+      ctx.fillStyle = colorAt(nx, ny, time);
+      ctx.beginPath();
+      ctx.moveTo(p1.x, p1.y);
+      ctx.lineTo(p2.x, p2.y);
+      ctx.lineTo(p3.x, p3.y);
+      ctx.closePath();
+      ctx.globalAlpha = settings.fillAlpha;
+      ctx.fill();
+      ctx.globalAlpha = settings.lineAlpha;
+      ctx.strokeStyle = 'rgba(216, 197, 138, 0.2)';
+      ctx.stroke();
+    };
+
+    const render = (time) => {
+      ctx.clearRect(0, 0, width, height);
+      ctx.fillStyle = 'rgba(8, 10, 14, 0.92)';
+      ctx.globalAlpha = 1;
+      ctx.fillRect(0, 0, width, height);
+
+      for (let row = 0; row < settings.rows; row += 1) {
+        for (let col = 0; col < settings.cols; col += 1) {
+          const p1 = getPoint(row, col, time);
+          const p2 = getPoint(row, col + 1, time);
+          const p3 = getPoint(row + 1, col, time);
+          const p4 = getPoint(row + 1, col + 1, time);
+          drawTriangle(p1, p2, p4, time);
+          drawTriangle(p1, p4, p3, time);
+        }
+      }
+
+      if (!prefersReducedMotion.matches) {
+        requestAnimationFrame(render);
+      }
+    };
+
+    setSize();
+    render(0);
+
+    const resizeObserver = () => {
+      setSize();
+      render(0);
+    };
+
+    window.addEventListener('resize', resizeObserver);
+    prefersReducedMotion.addEventListener('change', resizeObserver);
+  }
+</script>
+
+<style>
+  #mesh-background {
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+    pointer-events: none;
+  }
+</style>
