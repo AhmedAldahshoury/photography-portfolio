@@ -1,12 +1,13 @@
 ---
-import { buildImageUrl } from '../utils/imageUrl';
+import { cfImageUrl } from '../utils/cfImages';
 
 const { album } = Astro.props;
+const badgeLabel = album.date ? new Date(album.date).getFullYear().toString() : 'Album';
 ---
 
 <a class="card" href={`/albums/${album.slug}`}>
   <img
-    src={buildImageUrl(album.coverImage, { width: 700, quality: 75 })}
+    src={cfImageUrl(album.coverKey, { width: 700, quality: 75 })}
     alt={`${album.title} cover`}
     loading="lazy"
     decoding="async"
@@ -14,8 +15,7 @@ const { album } = Astro.props;
     height="467"
   />
   <div class="card-body">
-    <div class="badge">{album.year}</div>
+    <div class="badge">{badgeLabel}</div>
     <h3 style="margin-top: 0.75rem;">{album.title}</h3>
-    <p style="color: var(--muted); margin-top: 0.5rem;">{album.location}</p>
   </div>
 </a>

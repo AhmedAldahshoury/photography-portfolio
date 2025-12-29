@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import AlbumCard from '../../components/AlbumCard.astro';
-import albums from '../../data/albums.json';
+import albums from '../../data/albums.generated.json';
 ---
 
 <BaseLayout
@@ -12,8 +12,8 @@ import albums from '../../data/albums.json';
     <div class="container">
       <h1 class="section-title">Albums</h1>
       <p class="section-subtitle">
-        Discover collections of editorial, travel, and atmospheric photography. Each album is driven by JSON data
-        for fast static delivery.
+        Discover collections of editorial, travel, and atmospheric photography. Each album is generated directly
+        from R2 for fast static delivery.
       </p>
       <div class="grid grid-3" style="margin-top: 2.5rem;">
         {albums.map((album) => (

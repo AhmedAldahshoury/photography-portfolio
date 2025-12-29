@@ -1,6 +1,6 @@
 # T7TFOS Photography Portfolio
 
-Astro-based photography portfolio built for Cloudflare Pages with JSON-driven albums.
+Astro-based photography portfolio built for Cloudflare Pages with R2-generated albums.
 
 ## Quick start
 
@@ -11,41 +11,72 @@ npm run dev
 
 ## Structure
 
-- `src/data/albums.json` - album metadata and image lists (R2 object paths or full URLs without query params)
-- `src/utils/imageUrl.ts` - helper for building Cloudflare Image Transformation URLs
+- `scripts/generate-albums-from-r2.mjs` - build-time generator that pulls album data from R2
+- `src/data/albums.generated.json` - generated album metadata and image keys
+- `src/utils/cfImages.ts` - helper for building R2 URLs and Cloudflare Image Transformations URLs
 - `src/pages/albums/[slug].astro` - dynamic album detail route
 
-## Deployment
+## How albums are generated from R2
 
-Cloudflare Pages will use the Astro Cloudflare adapter with `output: 'static'`.
+The build step runs `scripts/generate-albums-from-r2.mjs`, which lists objects in R2 under `albums/` and writes
+`src/data/albums.generated.json`.
+
+Required environment variables (set in Cloudflare Pages):
+
+- `R2_ACCOUNT_ID`
+- `R2_ACCESS_KEY_ID`
+- `R2_SECRET_ACCESS_KEY`
+- `R2_BUCKET_NAME`
+- `R2_PUBLIC_BASE_URL`
+
+### Required R2 folder structure
+
+```
+albums/<album-folder>/<image files>
+```
+
+Example:
+
+```
+albums/2020-10-04-Banisuef/DSC_3687.jpg
+albums/2020-10-04-Banisuef/DSC_3688.jpg
+albums/2020-10-04-Banisuef/cover.jpg
+```
+
+**Case sensitivity matters.** Folder and file names are used exactly as stored in R2. Do not rename or slugify
+when uploading content.
+
+### Adding a new album
+
+1. Upload a new folder to R2 at `albums/<album-folder>/` with image files.
+2. (Optional) Add a `cover.*` image inside the folder to control the album cover.
+3. Redeploy the site. The build will regenerate `src/data/albums.generated.json` automatically.
 
 ## Image hosting (Cloudflare R2)
 
 Images are stored in Cloudflare R2 and served through a custom domain:
 
 - **Bucket custom domain:** `https://img.t7tfos.com`
-- **Object keys:** `/albums/<album-slug>/<filename>.jpg`
-
-To add a new album:
-
-1. Upload a folder to R2 at `albums/<album-slug>/`.
-2. Update `src/data/albums.json` with the album metadata and image paths. Use either:
-   - A full URL without query params (e.g. `https://img.t7tfos.com/albums/.../image.jpg`), or
-   - An object path (e.g. `/albums/<album-slug>/image.jpg`).
+- **Object keys:** `albums/<album-folder>/<filename>.jpg`
 
 ## Image resizing (Cloudflare Image Transformations)
 
 Cloudflare Image Transformations must be enabled for the custom domain. The site never stores multiple sizes
-locally; it generates optimized URLs at runtime using `buildImageUrl` in `src/utils/imageUrl.ts`.
+locally; it generates optimized URLs with the `/cdn-cgi/image/...` format via `cfImageUrl` in
+`src/utils/cfImages.ts`.
 
 Example:
 
 ```ts
-buildImageUrl('/albums/landscape/01.jpg', { width: 900, quality: 78 });
+cfImageUrl('albums/landscape/01.jpg', { width: 900, quality: 78 });
 ```
 
 The helper:
 
 - Defaults to `format=auto`, `quality=80`, `fit=scale-down` (prevents upscaling).
-- Accepts both relative object paths and full URLs.
-- Appends/overwrites query params without duplicating `?` or `&`.
+- Builds URLs in the `/cdn-cgi/image/<opts>/<path>` format.
+- Uses `R2_PUBLIC_BASE_URL` as the base URL.
+
+## Deployment
+
+Cloudflare Pages will run `npm run build`, which executes the prebuild generator and keeps the output static.
