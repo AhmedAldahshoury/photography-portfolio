@@ -4,7 +4,7 @@ import albums from '../data/albums.generated.json';
 import { cfImageUrl } from '../utils/cfImages';
 
 const heroImages = albums.slice(0, 6);
-const featuredLoop = albums.slice(0, 10);
+const heroLoopImages = [...heroImages, ...heroImages];
 ---
 
 <BaseLayout
@@ -19,49 +19,20 @@ const featuredLoop = albums.slice(0, 10);
         <a class="btn" href="/albums">View Albums</a>
         <a class="btn" href="/contact">Book a Session</a>
       </div>
-      <div class="hero-visuals">
-        {heroImages.map((album) => (
-          <img
-            src={cfImageUrl(album.coverKey, { width: 600, quality: 76 })}
-            alt={`${album.title} cover`}
-            loading="lazy"
-            decoding="async"
-            width="500"
-            height="350"
-          />
-        ))}
-      </div>
-    </div>
-  </section>
-
-  <section class="section album-loop">
-    <div class="container">
-      <div class="loop-header">
-        <h2 class="section-title">Featured Album Loop</h2>
-        <p class="section-subtitle">Hover to pause the rotation.</p>
-      </div>
-      <div class="loop-stage">
-        <div class="loop-ring" style={`--total: ${featuredLoop.length};`}>
-          {featuredLoop.map((album, index) => (
-            <a
-              class="loop-item"
-              style={`--i: ${index};`}
-              href={`/albums/${album.slug}`}
-              aria-label={`Open ${album.title}`}
-            >
+      <div class="hero-visuals" style={`--item-count: ${heroImages.length};`}>
+        <div class="hero-visuals-track">
+          {heroLoopImages.map((album) => (
+            <a class="hero-visuals-item" href={`/albums/${album.slug}`}>
               <img
-                src={cfImageUrl(album.coverKey, { width: 400, quality: 72 })}
+                src={cfImageUrl(album.coverKey, { width: 600, quality: 76 })}
                 alt={`${album.title} cover`}
                 loading="lazy"
                 decoding="async"
-                width="320"
-                height="320"
+                width="500"
+                height="350"
               />
             </a>
           ))}
-        </div>
-        <div class="loop-center">
-          <span>Curated in motion</span>
         </div>
       </div>
     </div>

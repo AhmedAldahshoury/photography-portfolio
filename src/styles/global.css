@@ -156,134 +156,55 @@ main {
 
 .hero-visuals {
   margin-top: 3rem;
+  overflow: hidden;
+  border-radius: 22px;
+  border: 1px solid var(--border);
+  background: rgba(17, 21, 28, 0.6);
+}
+
+.hero-visuals-track {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(160px, 1fr);
   gap: 1rem;
+  padding: 1rem;
+  animation: hero-loop calc(var(--item-count) * 1s) linear infinite;
+}
+
+.hero-visuals:hover .hero-visuals-track {
+  animation-play-state: paused;
+}
+
+.hero-visuals-item {
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
 }
 
 .hero-visuals img {
   width: 100%;
   height: 180px;
   object-fit: cover;
-  border-radius: 18px;
-  border: 1px solid var(--border);
-  box-shadow: var(--shadow);
+  display: block;
 }
 
-.album-loop {
-  position: relative;
-  overflow: hidden;
-}
-
-.loop-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1.5rem;
-  flex-wrap: wrap;
-}
-
-.loop-stage {
-  position: relative;
-  display: grid;
-  place-items: center;
-  min-height: 420px;
-  margin-top: 3rem;
-}
-
-.loop-ring {
-  position: relative;
-  width: 360px;
-  height: 360px;
-  animation: loop-spin 30s linear infinite;
-}
-
-.loop-stage:hover .loop-ring {
-  animation-play-state: paused;
-}
-
-.loop-item {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 120px;
-  height: 120px;
-  transform: translate(-50%, -50%)
-    rotate(calc(360deg / var(--total) * var(--i)))
-    translate(0, -180px)
-    rotate(calc(-360deg / var(--total) * var(--i)));
-  transition: transform 0.3s ease;
-}
-
-.loop-item img {
-  width: 100%;
-  height: 100%;
-  border-radius: 999px;
-  border: 1px solid var(--border);
-  object-fit: cover;
-  box-shadow: var(--shadow);
-}
-
-.loop-item:hover {
-  transform: translate(-50%, -50%)
-    rotate(calc(360deg / var(--total) * var(--i)))
-    translate(0, -180px)
-    scale(1.05)
-    rotate(calc(-360deg / var(--total) * var(--i)));
-}
-
-.loop-center {
-  position: absolute;
-  width: 180px;
-  height: 180px;
-  border-radius: 999px;
-  background: rgba(15, 18, 24, 0.8);
-  border: 1px solid var(--border);
-  display: grid;
-  place-items: center;
-  text-transform: uppercase;
-  letter-spacing: 0.2em;
-  font-size: 0.7rem;
-  color: var(--muted);
-  text-align: center;
-  padding: 1rem;
-}
-
-@keyframes loop-spin {
+@keyframes hero-loop {
   from {
-    transform: rotate(0deg);
+    transform: translateX(0);
   }
   to {
-    transform: rotate(360deg);
+    transform: translateX(-50%);
   }
 }
 
 @media (max-width: 720px) {
-  .loop-ring {
-    width: 280px;
-    height: 280px;
+  .hero-visuals-track {
+    grid-auto-columns: minmax(140px, 1fr);
   }
 
-  .loop-item {
-    width: 90px;
-    height: 90px;
-    transform: translate(-50%, -50%)
-      rotate(calc(360deg / var(--total) * var(--i)))
-      translate(0, -140px)
-      rotate(calc(-360deg / var(--total) * var(--i)));
-  }
-
-  .loop-item:hover {
-    transform: translate(-50%, -50%)
-      rotate(calc(360deg / var(--total) * var(--i)))
-      translate(0, -140px)
-      scale(1.05)
-      rotate(calc(-360deg / var(--total) * var(--i)));
-  }
-
-  .loop-center {
-    width: 140px;
-    height: 140px;
+  .hero-visuals img {
+    height: 150px;
   }
 }
 
