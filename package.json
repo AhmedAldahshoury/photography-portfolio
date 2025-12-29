@@ -3,12 +3,14 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
+    "prebuild": "node scripts/generate-albums-from-r2.mjs",
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview"
   },
   "dependencies": {
-    "astro": "^4.16.2",
-    "@astrojs/cloudflare": "^10.3.0"
+    "@astrojs/cloudflare": "^10.3.0",
+    "@aws-sdk/client-s3": "^3.734.0",
+    "astro": "^4.16.2"
   }
 }
