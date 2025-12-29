@@ -4,10 +4,11 @@ import { cfImageUrl } from '../utils/cfImages';
 const { album } = Astro.props;
 const albumDate = album.date ? new Date(album.date) : null;
 const yearLabel = albumDate ? albumDate.getUTCFullYear() : 'Album';
-const location = album.slug?.split('-').slice(3).join(' ');
+const titleLocation = album.title?.split('—')[0]?.trim();
+const location = titleLocation || album.slug?.split('-').slice(3).join(' ');
 const locationLabel = location
   ? location.replace(/\b\w/g, (char) => char.toUpperCase())
-  : 'Visual Series';
+  : 'Signature Series';
 const imageCount = album.imageKeys?.length ?? 0;
 const frameLabel = imageCount ? `${imageCount} frame${imageCount === 1 ? '' : 's'}` : 'Gallery';
 ---
@@ -25,8 +26,10 @@ const frameLabel = imageCount ? `${imageCount} frame${imageCount === 1 ? '' : 's
   <div class="card-body">
     <div class="badge">{yearLabel}</div>
     <h3 style="margin-top: 0.75rem;">{album.title}</h3>
-    <p style="color: var(--muted); margin-top: 0.5rem;">{locationLabel}</p>
-    <p style="color: var(--muted); margin-top: 0.35rem; font-size: 0.9rem;">{frameLabel}</p>
+    <p style="color: var(--muted); margin-top: 0.5rem;">{album.description}</p>
+    <p style="color: var(--muted); margin-top: 0.75rem; font-size: 0.9rem;">
+      {locationLabel} · {frameLabel}
+    </p>
     {albumDate && (
       <p style="color: var(--muted); margin-top: 0.5rem;">
         {albumDate.toLocaleDateString('en-US', { month: 'long', day: '2-digit', year: 'numeric', timeZone: 'UTC' })}
