@@ -15,9 +15,15 @@ const albumDate = album.date ? new Date(album.date) : null;
 const formattedDate = albumDate
   ? albumDate.toLocaleDateString('en-US', { month: 'long', day: '2-digit', year: 'numeric', timeZone: 'UTC' })
   : null;
+const location = album.slug?.split('-').slice(3).join(' ');
+const locationLabel = location
+  ? location.replace(/\b\w/g, (char) => char.toUpperCase())
+  : 'T7TFOS';
+const imageCount = album.imageKeys?.length ?? 0;
+const frameLabel = imageCount ? `${imageCount} frame${imageCount === 1 ? '' : 's'}` : 'Gallery';
 const metaDescription = albumDate
-  ? `Photography album ${album.title} captured on ${formattedDate}.`
-  : `Photography album ${album.title} by T7TFOS.`;
+  ? `${album.title} captured on ${formattedDate} in ${locationLabel}, featuring ${frameLabel}.`
+  : `Photography album ${album.title} in ${locationLabel}, featuring ${frameLabel}.`;
 ---
 
 <BaseLayout
@@ -31,7 +37,7 @@ const metaDescription = albumDate
           <span class="badge">{formattedDate ?? 'Photography Album'}</span>
           <h1 class="section-title" style="margin-top: 1rem;">{album.title}</h1>
           <p class="section-subtitle" style="margin-top: 1rem;">
-            A curated series from T7TFOS, delivered from Cloudflare R2 with image transformations for speed.
+            {locationLabel} · {frameLabel}
           </p>
           {albumDate && (
             <p style="margin-top: 1.5rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.2em;">
