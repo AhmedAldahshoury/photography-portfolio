@@ -21,6 +21,9 @@ npm run dev
 The build step runs `scripts/generate-albums-from-r2.mjs`, which lists objects in R2 under `albums/` and writes
 `src/data/albums.generated.json`.
 
+If the required environment variables are missing, the script will reuse the existing
+`src/data/albums.generated.json` file (when present) so local builds can still complete.
+
 Required environment variables (set in Cloudflare Pages):
 
 - `R2_ACCOUNT_ID`

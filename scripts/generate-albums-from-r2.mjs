@@ -1,4 +1,4 @@
-import { mkdir, writeFile } from 'fs/promises';
+import { access, mkdir, writeFile } from 'fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { ListObjectsV2Command, S3Client } from '@aws-sdk/client-s3';
@@ -12,15 +12,12 @@ const requiredEnv = [
 ];
 
 const missing = requiredEnv.filter((key) => !process.env[key]);
-if (missing.length) {
-  throw new Error(`Missing required env vars: ${missing.join(', ')}`);
-}
 
 const accountId = process.env.R2_ACCOUNT_ID;
 const accessKeyId = process.env.R2_ACCESS_KEY_ID;
 const secretAccessKey = process.env.R2_SECRET_ACCESS_KEY;
 const bucket = process.env.R2_BUCKET_NAME;
-const baseUrl = process.env.R2_PUBLIC_BASE_URL.replace(/\/$/, '');
+const baseUrl = process.env.R2_PUBLIC_BASE_URL?.replace(/\/$/, '');
 
 const client = new S3Client({
   region: 'auto',
@@ -32,6 +29,15 @@ const client = new S3Client({
 });
 
 const imageExtensions = new Set(['.jpg', '.jpeg', '.png', '.webp', '.avif']);
+
+const fileExists = async (targetPath) => {
+  try {
+    await access(targetPath);
+    return true;
+  } catch {
+    return false;
+  }
+};
 
 const isImageKey = (key) => {
   if (!key || key.endsWith('/')) {
@@ -84,7 +90,7 @@ const parseAlbumDate = (folder) => {
 };
 
 const ensureBaseUrlIsValid = () => {
-  if (!/^https?:\/\//i.test(baseUrl)) {
+  if (!baseUrl || !/^https?:\/\//i.test(baseUrl)) {
     throw new Error('R2_PUBLIC_BASE_URL must include protocol, e.g. https://img.t7tfos.com');
   }
 };
@@ -157,15 +163,25 @@ const buildAlbums = (keys) => {
 };
 
 const main = async () => {
+  const outputDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', 'src', 'data');
+  await mkdir(outputDir, { recursive: true });
+
+  const outputPath = path.join(outputDir, 'albums.generated.json');
+  if (missing.length) {
+    const warning = `Missing required env vars: ${missing.join(', ')}`;
+    if (await fileExists(outputPath)) {
+      console.warn(`[generate-albums-from-r2] ${warning}. Using existing ${outputPath}.`);
+      return;
+    }
+
+    throw new Error(warning);
+  }
+
   ensureBaseUrlIsValid();
 
   const keys = await listAllKeys();
   const albums = buildAlbums(keys);
 
-  const outputDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', 'src', 'data');
-  await mkdir(outputDir, { recursive: true });
-
-  const outputPath = path.join(outputDir, 'albums.generated.json');
   await writeFile(outputPath, `${JSON.stringify(albums, null, 2)}\n`);
 
   console.log(`Generated ${albums.length} albums to ${outputPath}`);
