@@ -21,8 +21,18 @@ const locationLabel = location
 const albumTitle = locationLabel || 'Signature Series';
 const imageCount = album.imageKeys?.length ?? 0;
 const frameLabel = imageCount ? `${imageCount} frame${imageCount === 1 ? '' : 's'}` : 'Gallery';
-const descriptionFallback = `A refined visual study of ${albumTitle}, shaped by light, texture, and sense of place.`;
-const albumDescription = album.description ?? descriptionFallback;
+const hashSeed = (input) =>
+  Array.from(input ?? '').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+const seed = hashSeed(album.slug || album.title || album.coverKey || '');
+const toneOptions = ['luminous', 'moody', 'sunlit', 'nocturnal', 'softly lit', 'atmospheric'];
+const focusOptions = ['textures', 'architecture', 'portraits', 'landscapes', 'details', 'ritual'];
+const paletteOptions = ['warm neutrals', 'deep shadows', 'muted blues', 'golden tones', 'silvery highlights', 'earthy hues'];
+const tone = toneOptions[seed % toneOptions.length];
+const focus = focusOptions[(seed + 3) % focusOptions.length];
+const palette = paletteOptions[(seed + 7) % paletteOptions.length];
+const albumDescription =
+  album.description ??
+  `A ${tone} study of ${albumTitle} highlighting ${focus} with ${palette}.`;
 ---
 
 <a class="card" href={`/albums/${album.slug}`}>
