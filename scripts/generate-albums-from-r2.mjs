@@ -169,7 +169,9 @@ const main = async () => {
   const outputPath = path.join(outputDir, 'albums.generated.json');
   if (missing.length) {
     const warning = `Missing required env vars: ${missing.join(', ')}`;
-    if (await fileExists(outputPath)) {
+    const isCloudflareBuild = process.env.CF_PAGES === '1';
+
+    if (!isCloudflareBuild && (await fileExists(outputPath))) {
       console.warn(`[generate-albums-from-r2] ${warning}. Using existing ${outputPath}.`);
       return;
     }

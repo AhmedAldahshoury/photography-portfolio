@@ -22,7 +22,8 @@ The build step runs `scripts/generate-albums-from-r2.mjs`, which lists objects i
 `src/data/albums.generated.json`.
 
 If the required environment variables are missing, the script will reuse the existing
-`src/data/albums.generated.json` file (when present) so local builds can still complete.
+`src/data/albums.generated.json` file (when present) for **local** builds. Cloudflare Pages
+builds must have the env vars set, otherwise the build fails to avoid shipping stale data.
 
 Required environment variables (set in Cloudflare Pages):
 
